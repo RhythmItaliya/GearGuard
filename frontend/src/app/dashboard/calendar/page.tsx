@@ -212,12 +212,14 @@ export default function CalendarPage() {
                   setSelectedDate(day);
                   setIsFormOpen(true);
                 }}
-                className={`min-h-[100px] p-2 border-b border-r cursor-pointer transition-colors hover:bg-muted/50 ${isToday ? 'bg-primary/5' : ''
-                  }`}
+                className={`min-h-[100px] p-2 border-b border-r cursor-pointer transition-colors hover:bg-muted/50 ${
+                  isToday ? 'bg-primary/5' : ''
+                }`}
               >
                 <div
-                  className={`text-sm font-medium mb-1 ${isToday ? 'text-primary' : 'text-foreground'
-                    }`}
+                  className={`text-sm font-medium mb-1 ${
+                    isToday ? 'text-primary' : 'text-foreground'
+                  }`}
                 >
                   {format(day, 'd')}
                 </div>
@@ -229,8 +231,9 @@ export default function CalendarPage() {
                       onClick={e => e.stopPropagation()}
                     >
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${stageColor[req.status] || 'bg-gray-400'
-                          }`}
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          stageColor[req.status] || 'bg-gray-400'
+                        }`}
                       />
                       <span className="truncate">{req.title}</span>
                     </div>

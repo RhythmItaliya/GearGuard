@@ -288,10 +288,11 @@ export default function MaintenancePage() {
               key={s}
               type="button"
               onClick={() => setForm({ ...form, stage: s })}
-              className={`px-2 py-1 text-xs rounded ${form.stage === s
+              className={`px-2 py-1 text-xs rounded ${
+                form.stage === s
                   ? stageColor[s]
                   : 'bg-muted text-muted-foreground'
-                }`}
+              }`}
             >
               {stageLabel[s]}
             </button>
@@ -397,14 +398,16 @@ export default function MaintenancePage() {
                   key={p}
                   type="button"
                   onClick={() => setForm({ ...form, priority: p })}
-                  className={`p-1.5 rounded ${form.priority === p ? 'bg-primary/10' : ''
-                    }`}
+                  className={`p-1.5 rounded ${
+                    form.priority === p ? 'bg-primary/10' : ''
+                  }`}
                 >
                   <Star
-                    className={`h-5 w-5 ${form.priority === p
+                    className={`h-5 w-5 ${
+                      form.priority === p
                         ? 'fill-primary text-primary'
                         : 'text-muted-foreground'
-                      }`}
+                    }`}
                   />
                 </button>
               ))}
