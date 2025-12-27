@@ -1,8 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+import { ENDPOINTS, API_BASE_URL } from '@/config/endpoints';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,15 +17,16 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Call your backend API to authenticate
-          const response = await axios.post(`${API_URL}/auth/login`, {
-            email: credentials.email,
-            password: credentials.password,
-          });
+          const response = await axios.post(
+            `${API_BASE_URL}${ENDPOINTS.AUTH.LOGIN}`,
+            {
+              email: credentials.email,
+              password: credentials.password,
+            }
+          );
 
-          const user = response.data;
-
-          if (user && user.token) {
+          if (response.data.success && response.data.data) {
+            const user = response.data.data;
             return {
               id: user.id,
               email: user.email,
@@ -36,9 +36,9 @@ export const authOptions: NextAuthOptions = {
           }
 
           return null;
-        } catch (error) {
+        } catch (error: any) {
           console.error('Authentication error:', error);
-          throw new Error('Invalid credentials');
+          throw new Error(error.response?.data?.message || 'Invalid credentials');
         }
       },
     }),
@@ -46,15 +46,15 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.token = (user as any).token;
+        token.id = (user as any).id;
+        token.accessToken = (user as any).token;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).id = token.id;
-        (session as any).token = token.token;
+        (session.user as any).accessToken = token.accessToken;
       }
       return session;
     },
