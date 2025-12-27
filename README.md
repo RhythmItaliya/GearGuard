@@ -1,5 +1,11 @@
 # GearGuard
 
+## 🎥 Demo & Links
+
+- **📹 Video Demo**: [Watch on YouTube](https://youtu.be/rjjNnxymDjA?si=IcD-ZiriAxpWY4ET)
+- **🌐 Live Demo**: [https://gearguard-hackathon.vercel.app/](https://gearguard-hackathon.vercel.app/)
+- **🖥️ Server**: [https://gearguard.onrender.com](https://gearguard.onrender.com)
+
 ## 📁 Project Structure
 
 - `backend/`: Node.js, TypeScript, Express, Prisma, PostgreSQL
