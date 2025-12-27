@@ -21,6 +21,7 @@ import {
   Plus,
   Clock,
   ClipboardList,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,11 +46,18 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useSession } from 'next-auth/react';
 
+const stages = ['new_request', 'in_progress', 'repaired', 'scrap'];
+const stageLabel: Record<string, string> = {
+  new_request: 'New Request',
+  in_progress: 'In Progress',
+  repaired: 'Repaired',
+  scrap: 'Scrap',
+};
 const stageColor: Record<string, string> = {
-  pending: 'bg-blue-500',
-  in_progress: 'bg-amber-500',
-  completed: 'bg-green-500',
-  cancelled: 'bg-red-500',
+  new_request: 'bg-blue-100 text-blue-700',
+  in_progress: 'bg-amber-100 text-amber-700',
+  repaired: 'bg-green-100 text-green-700',
+  scrap: 'bg-red-100 text-red-700',
 };
 
 export default function CalendarPage() {
@@ -75,9 +83,13 @@ export default function CalendarPage() {
     technicianUserId: '',
     maintenanceTeamId: '',
     maintenanceType: 'preventive',
+    requestDate: new Date().toISOString().split('T')[0],
     scheduledDate: '',
+    durationHours: '0',
     priority: 'medium',
+    stage: 'new_request',
     notes: '',
+    instructions: '',
   });
 
   useEffect(() => {
@@ -269,16 +281,30 @@ export default function CalendarPage() {
         onSubmit={handleSubmit}
         loading={isCreating}
       >
+        <div className="flex gap-1 mb-3 flex-wrap">
+          {stages.map(s => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setForm({ ...form, stage: s })}
+              className={`px-2 py-1 text-xs rounded ${
+                form.stage === s
+                  ? stageColor[s]
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              {stageLabel[s]}
+            </button>
+          ))}
+        </div>
+        <Field label="Subject">
+          <Input
+            value={form.subject}
+            onChange={e => setForm({ ...form, subject: e.target.value })}
+            required
+          />
+        </Field>
         <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2">
-            <Field label="Subject">
-              <Input
-                value={form.subject}
-                onChange={e => setForm({ ...form, subject: e.target.value })}
-                required
-              />
-            </Field>
-          </div>
           <Field label="Maintenance For">
             <Select
               value={form.maintenanceFor}
@@ -324,6 +350,30 @@ export default function CalendarPage() {
             onValueChange={v => setForm({ ...form, companyId: v })}
             addHref="/dashboard/companies"
           />
+          <SelectField
+            label="Team"
+            options={teams}
+            value={form.maintenanceTeamId}
+            onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
+            addHref="/dashboard/teams"
+          />
+          <SelectField
+            label="Technician"
+            options={users.map((u: any) => ({
+              id: u.id,
+              name: u.fullName || u.email,
+            }))}
+            value={form.technicianUserId}
+            onValueChange={v => setForm({ ...form, technicianUserId: v })}
+            addHref="/register"
+          />
+          <Field label="Request Date">
+            <Input
+              type="date"
+              value={form.requestDate}
+              onChange={e => setForm({ ...form, requestDate: e.target.value })}
+            />
+          </Field>
           <Field label="Scheduled Date">
             <Input
               type="datetime-local"
@@ -334,18 +384,69 @@ export default function CalendarPage() {
               required
             />
           </Field>
-          <SelectField
-            label="Team"
-            options={teams}
-            value={form.maintenanceTeamId}
-            onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
-            addHref="/dashboard/teams"
-          />
+          <Field label="Duration (hours)">
+            <Input
+              type="number"
+              value={form.durationHours}
+              onChange={e =>
+                setForm({ ...form, durationHours: e.target.value })
+              }
+            />
+          </Field>
+          <Field label="Priority">
+            <div className="flex gap-1">
+              {['low', 'medium', 'high'].map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setForm({ ...form, priority: p })}
+                  className={`p-1.5 rounded ${
+                    form.priority === p ? 'bg-primary/10' : ''
+                  }`}
+                >
+                  <Star
+                    className={`h-5 w-5 ${
+                      form.priority === p
+                        ? 'fill-primary text-primary'
+                        : 'text-muted-foreground'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          </Field>
+          <Field label="Maintenance Type">
+            <RadioGroup
+              value={form.maintenanceType}
+              onValueChange={v => setForm({ ...form, maintenanceType: v })}
+              className="flex gap-3"
+            >
+              <div className="flex items-center gap-1">
+                <RadioGroupItem value="corrective" id="c" />
+                <Label htmlFor="c" className="text-sm">
+                  Corrective
+                </Label>
+              </div>
+              <div className="flex items-center gap-1">
+                <RadioGroupItem value="preventive" id="p" />
+                <Label htmlFor="p" className="text-sm">
+                  Preventive
+                </Label>
+              </div>
+            </RadioGroup>
+          </Field>
         </div>
         <Field label="Notes">
           <Textarea
             value={form.notes}
             onChange={e => setForm({ ...form, notes: e.target.value })}
+            rows={3}
+          />
+        </Field>
+        <Field label="Instructions">
+          <Textarea
+            value={form.instructions}
+            onChange={e => setForm({ ...form, instructions: e.target.value })}
             rows={3}
           />
         </Field>
