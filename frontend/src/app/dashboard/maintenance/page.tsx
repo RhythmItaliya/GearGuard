@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react';
 import { useMaintenance } from '@/hooks/use-maintenance';
 import { useResources } from '@/hooks/use-resources';
 import { useEquipment } from '@/hooks/use-equipment';
-import { PageHeader, DataTable, FormDialog, Field } from '@/components/shared';
+import {
+  PageHeader,
+  DataTable,
+  FormDialog,
+  Field,
+  SelectField,
+} from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -213,6 +219,11 @@ export default function MaintenancePage() {
       (tab === 'all' || getStage(i.status) === tab)
   );
 
+  const userOptions = users.map((u: any) => ({
+    id: u.id,
+    name: u.fullName || u.email,
+  }));
+
   return (
     <div className="space-y-4">
       <PageHeader
@@ -277,11 +288,10 @@ export default function MaintenancePage() {
               key={s}
               type="button"
               onClick={() => setForm({ ...form, stage: s })}
-              className={`px-2 py-1 text-xs rounded ${
-                form.stage === s
+              className={`px-2 py-1 text-xs rounded ${form.stage === s
                   ? stageColor[s]
                   : 'bg-muted text-muted-foreground'
-              }`}
+                }`}
             >
               {stageLabel[s]}
             </button>
@@ -311,110 +321,50 @@ export default function MaintenancePage() {
             </Select>
           </Field>
           {form.maintenanceFor === 'equipment' ? (
-            <Field label="Equipment">
-              <Select
-                value={form.equipmentId}
-                onValueChange={v => setForm({ ...form, equipmentId: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {equipment.map((e: any) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <SelectField
+              label="Equipment"
+              options={equipment}
+              value={form.equipmentId}
+              onValueChange={v => setForm({ ...form, equipmentId: v })}
+              addHref="/dashboard/equipment"
+            />
           ) : (
-            <Field label="Work Center">
-              <Select
-                value={form.workCenterId}
-                onValueChange={v => setForm({ ...form, workCenterId: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {workCenters.map((w: any) => (
-                    <SelectItem key={w.id} value={w.id}>
-                      {w.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <SelectField
+              label="Work Center"
+              options={workCenters}
+              value={form.workCenterId}
+              onValueChange={v => setForm({ ...form, workCenterId: v })}
+              addHref="/dashboard/work-centers"
+            />
           )}
-          <Field label="Category">
-            <Select
-              value={form.categoryId}
-              onValueChange={v => setForm({ ...form, categoryId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Company">
-            <Select
-              value={form.companyId}
-              onValueChange={v => setForm({ ...form, companyId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Team">
-            <Select
-              value={form.maintenanceTeamId}
-              onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {teams.map((t: any) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Technician">
-            <Select
-              value={form.technicianUserId}
-              onValueChange={v => setForm({ ...form, technicianUserId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((u: any) => (
-                  <SelectItem key={u.id} value={u.id}>
-                    {u.fullName || u.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            label="Category"
+            options={categories}
+            value={form.categoryId}
+            onValueChange={v => setForm({ ...form, categoryId: v })}
+            addHref="/dashboard/categories"
+          />
+          <SelectField
+            label="Company"
+            options={companies}
+            value={form.companyId}
+            onValueChange={v => setForm({ ...form, companyId: v })}
+            addHref="/dashboard/companies"
+          />
+          <SelectField
+            label="Team"
+            options={teams}
+            value={form.maintenanceTeamId}
+            onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
+            addHref="/dashboard/teams"
+          />
+          <SelectField
+            label="Technician"
+            options={userOptions}
+            value={form.technicianUserId}
+            onValueChange={v => setForm({ ...form, technicianUserId: v })}
+            addHref="/register"
+          />
           <Field label="Request Date">
             <Input
               type="date"
@@ -447,16 +397,14 @@ export default function MaintenancePage() {
                   key={p}
                   type="button"
                   onClick={() => setForm({ ...form, priority: p })}
-                  className={`p-1.5 rounded ${
-                    form.priority === p ? 'bg-primary/10' : ''
-                  }`}
+                  className={`p-1.5 rounded ${form.priority === p ? 'bg-primary/10' : ''
+                    }`}
                 >
                   <Star
-                    className={`h-5 w-5 ${
-                      form.priority === p
+                    className={`h-5 w-5 ${form.priority === p
                         ? 'fill-primary text-primary'
                         : 'text-muted-foreground'
-                    }`}
+                      }`}
                   />
                 </button>
               ))}

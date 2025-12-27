@@ -3,15 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useCategories } from '@/hooks/use-categories';
 import { useResources } from '@/hooks/use-resources';
-import { PageHeader, DataTable, FormDialog, Field } from '@/components/shared';
-import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  PageHeader,
+  DataTable,
+  FormDialog,
+  Field,
+  SelectField,
+} from '@/components/shared';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Folder } from 'lucide-react';
 import { EquipmentCategory } from '@/types';
@@ -101,6 +100,11 @@ export default function CategoriesPage() {
     i.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const userOptions = users.map((u: any) => ({
+    id: u.id,
+    name: u.fullName || u.email,
+  }));
+
   return (
     <div className="space-y-4">
       <PageHeader
@@ -153,40 +157,20 @@ export default function CategoriesPage() {
             required
           />
         </Field>
-        <Field label="Responsible">
-          <Select
-            value={form.responsibleUserId}
-            onValueChange={v => setForm({ ...form, responsibleUserId: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {users.map((u: any) => (
-                <SelectItem key={u.id} value={u.id}>
-                  {u.fullName || u.email}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
-        <Field label="Company">
-          <Select
-            value={form.companyId}
-            onValueChange={v => setForm({ ...form, companyId: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {companies.map((c: any) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label="Responsible"
+          options={userOptions}
+          value={form.responsibleUserId}
+          onValueChange={v => setForm({ ...form, responsibleUserId: v })}
+          addHref="/register"
+        />
+        <SelectField
+          label="Company"
+          options={companies}
+          value={form.companyId}
+          onValueChange={v => setForm({ ...form, companyId: v })}
+          addHref="/dashboard/companies"
+        />
       </FormDialog>
     </div>
   );

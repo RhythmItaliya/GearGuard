@@ -3,15 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useWorkCenters } from '@/hooks/use-work-centers';
 import { useResources } from '@/hooks/use-resources';
-import { PageHeader, DataTable, FormDialog, Field } from '@/components/shared';
-import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  PageHeader,
+  DataTable,
+  FormDialog,
+  Field,
+  SelectField,
+} from '@/components/shared';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Factory } from 'lucide-react';
 import { WorkCenter } from '@/types';
@@ -232,23 +231,13 @@ export default function WorkCentersPage() {
             />
           </Field>
         </div>
-        <Field label="Company">
-          <Select
-            value={form.companyId}
-            onValueChange={v => setForm({ ...form, companyId: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {companies.map((c: any) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label="Company"
+          options={companies}
+          value={form.companyId}
+          onValueChange={v => setForm({ ...form, companyId: v })}
+          addHref="/dashboard/companies"
+        />
       </FormDialog>
     </div>
   );

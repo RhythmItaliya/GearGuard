@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useTeams } from '@/hooks/use-teams';
 import { useResources } from '@/hooks/use-resources';
-import { PageHeader, DataTable, FormDialog, Field } from '@/components/shared';
+import {
+  PageHeader,
+  DataTable,
+  FormDialog,
+  Field,
+  SelectField,
+} from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -213,23 +219,13 @@ export default function TeamsPage() {
             required
           />
         </Field>
-        <Field label="Company">
-          <Select
-            value={form.companyId}
-            onValueChange={v => setForm({ ...form, companyId: v })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {companies.map((c: any) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label="Company"
+          options={companies}
+          value={form.companyId}
+          onValueChange={v => setForm({ ...form, companyId: v })}
+          addHref="/dashboard/companies"
+        />
       </FormDialog>
 
       <Dialog open={memberOpen} onOpenChange={setMemberOpen}>

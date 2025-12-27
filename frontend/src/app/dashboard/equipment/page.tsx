@@ -3,16 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useEquipment } from '@/hooks/use-equipment';
 import { useResources } from '@/hooks/use-resources';
-import { PageHeader, DataTable, FormDialog, Field } from '@/components/shared';
+import {
+  PageHeader,
+  DataTable,
+  FormDialog,
+  Field,
+  SelectField,
+} from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Settings } from 'lucide-react';
 import { Equipment } from '@/types';
@@ -152,6 +151,11 @@ export default function EquipmentPage() {
       i.serialNumber?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const userOptions = users.map((u: any) => ({
+    id: u.id,
+    name: u.fullName || u.email,
+  }));
+
   return (
     <div className="space-y-4">
       <PageHeader
@@ -210,40 +214,22 @@ export default function EquipmentPage() {
               onChange={e => setForm({ ...form, serialNumber: e.target.value })}
             />
           </Field>
-          <Field label="Category" tip="Equipment type">
-            <Select
-              value={form.categoryId}
-              onValueChange={v => setForm({ ...form, categoryId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Company" tip="Owning company">
-            <Select
-              value={form.companyId}
-              onValueChange={v => setForm({ ...form, companyId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            label="Category"
+            tip="Equipment type"
+            options={categories}
+            value={form.categoryId}
+            onValueChange={v => setForm({ ...form, categoryId: v })}
+            addHref="/dashboard/categories"
+          />
+          <SelectField
+            label="Company"
+            tip="Owning company"
+            options={companies}
+            value={form.companyId}
+            onValueChange={v => setForm({ ...form, companyId: v })}
+            addHref="/dashboard/companies"
+          />
           <Field label="Department">
             <Input
               value={form.department}
@@ -256,74 +242,34 @@ export default function EquipmentPage() {
               onChange={e => setForm({ ...form, location: e.target.value })}
             />
           </Field>
-          <Field label="Maintenance Team">
-            <Select
-              value={form.maintenanceTeamId}
-              onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {teams.map((t: any) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Technician">
-            <Select
-              value={form.technicianUserId}
-              onValueChange={v => setForm({ ...form, technicianUserId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((u: any) => (
-                  <SelectItem key={u.id} value={u.id}>
-                    {u.fullName || u.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Used By">
-            <Select
-              value={form.usedByUserId}
-              onValueChange={v => setForm({ ...form, usedByUserId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((u: any) => (
-                  <SelectItem key={u.id} value={u.id}>
-                    {u.fullName || u.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Work Center">
-            <Select
-              value={form.workCenterId}
-              onValueChange={v => setForm({ ...form, workCenterId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {workCenters.map((w: any) => (
-                  <SelectItem key={w.id} value={w.id}>
-                    {w.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            label="Maintenance Team"
+            options={teams}
+            value={form.maintenanceTeamId}
+            onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
+            addHref="/dashboard/teams"
+          />
+          <SelectField
+            label="Technician"
+            options={userOptions}
+            value={form.technicianUserId}
+            onValueChange={v => setForm({ ...form, technicianUserId: v })}
+            addHref="/register"
+          />
+          <SelectField
+            label="Used By"
+            options={userOptions}
+            value={form.usedByUserId}
+            onValueChange={v => setForm({ ...form, usedByUserId: v })}
+            addHref="/register"
+          />
+          <SelectField
+            label="Work Center"
+            options={workCenters}
+            value={form.workCenterId}
+            onValueChange={v => setForm({ ...form, workCenterId: v })}
+            addHref="/dashboard/work-centers"
+          />
           <Field label="Assigned Date">
             <Input
               type="date"

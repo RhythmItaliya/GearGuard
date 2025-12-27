@@ -30,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { FormDialog, Field } from '@/components/shared';
+import { FormDialog, Field, SelectField } from '@/components/shared';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -212,14 +212,12 @@ export default function CalendarPage() {
                   setSelectedDate(day);
                   setIsFormOpen(true);
                 }}
-                className={`min-h-[100px] p-2 border-b border-r cursor-pointer transition-colors hover:bg-muted/50 ${
-                  isToday ? 'bg-primary/5' : ''
-                }`}
+                className={`min-h-[100px] p-2 border-b border-r cursor-pointer transition-colors hover:bg-muted/50 ${isToday ? 'bg-primary/5' : ''
+                  }`}
               >
                 <div
-                  className={`text-sm font-medium mb-1 ${
-                    isToday ? 'text-primary' : 'text-foreground'
-                  }`}
+                  className={`text-sm font-medium mb-1 ${isToday ? 'text-primary' : 'text-foreground'
+                    }`}
                 >
                   {format(day, 'd')}
                 </div>
@@ -231,9 +229,8 @@ export default function CalendarPage() {
                       onClick={e => e.stopPropagation()}
                     >
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          stageColor[req.status] || 'bg-gray-400'
-                        }`}
+                        className={`w-1.5 h-1.5 rounded-full ${stageColor[req.status] || 'bg-gray-400'
+                          }`}
                       />
                       <span className="truncate">{req.title}</span>
                     </div>
@@ -294,76 +291,36 @@ export default function CalendarPage() {
             </Select>
           </Field>
           {form.maintenanceFor === 'equipment' ? (
-            <Field label="Equipment">
-              <Select
-                value={form.equipmentId}
-                onValueChange={v => setForm({ ...form, equipmentId: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {equipment.map((e: any) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <SelectField
+              label="Equipment"
+              options={equipment}
+              value={form.equipmentId}
+              onValueChange={v => setForm({ ...form, equipmentId: v })}
+              addHref="/dashboard/equipment"
+            />
           ) : (
-            <Field label="Work Center">
-              <Select
-                value={form.workCenterId}
-                onValueChange={v => setForm({ ...form, workCenterId: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {workCenters.map((w: any) => (
-                    <SelectItem key={w.id} value={w.id}>
-                      {w.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <SelectField
+              label="Work Center"
+              options={workCenters}
+              value={form.workCenterId}
+              onValueChange={v => setForm({ ...form, workCenterId: v })}
+              addHref="/dashboard/work-centers"
+            />
           )}
-          <Field label="Category">
-            <Select
-              value={form.categoryId}
-              onValueChange={v => setForm({ ...form, categoryId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field label="Company">
-            <Select
-              value={form.companyId}
-              onValueChange={v => setForm({ ...form, companyId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            label="Category"
+            options={categories}
+            value={form.categoryId}
+            onValueChange={v => setForm({ ...form, categoryId: v })}
+            addHref="/dashboard/categories"
+          />
+          <SelectField
+            label="Company"
+            options={companies}
+            value={form.companyId}
+            onValueChange={v => setForm({ ...form, companyId: v })}
+            addHref="/dashboard/companies"
+          />
           <Field label="Scheduled Date">
             <Input
               type="datetime-local"
@@ -374,23 +331,13 @@ export default function CalendarPage() {
               required
             />
           </Field>
-          <Field label="Team">
-            <Select
-              value={form.maintenanceTeamId}
-              onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {teams.map((t: any) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          <SelectField
+            label="Team"
+            options={teams}
+            value={form.maintenanceTeamId}
+            onValueChange={v => setForm({ ...form, maintenanceTeamId: v })}
+            addHref="/dashboard/teams"
+          />
         </div>
         <Field label="Notes">
           <Textarea

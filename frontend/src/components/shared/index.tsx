@@ -21,6 +21,14 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import Link from 'next/link';
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -252,4 +260,75 @@ export const Field = ({ label, tip, children }: FieldProps) => (
     </div>
     {children}
   </div>
+);
+
+// Enhanced Select Field with Empty State handling
+interface SelectFieldProps {
+  label: string;
+  options: { id: string; name: string }[];
+  value: string;
+  onValueChange: (v: string) => void;
+  addHref: string;
+  placeholder?: string;
+  tip?: string;
+  required?: boolean;
+}
+
+export const SelectField = ({
+  label,
+  options,
+  value,
+  onValueChange,
+  addHref,
+  placeholder = 'Select',
+  tip,
+  required,
+}: SelectFieldProps) => (
+  <Field label={label} tip={tip}>
+    <div className="flex gap-2">
+      <Select value={value} onValueChange={onValueChange} required={required}>
+        <SelectTrigger className="flex-1">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.length === 0 ? (
+            <div className="p-4 text-center space-y-2">
+              <p className="text-xs text-muted-foreground">
+                No {label.toLowerCase()} found
+              </p>
+              <Button
+                asChild
+                size="sm"
+                variant="ghost"
+                className="w-full gap-1 h-8 text-xs"
+              >
+                <Link href={addHref}>
+                  <Plus className="h-3 w-3" /> Add {label}
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            options.map(opt => (
+              <SelectItem key={opt.id} value={opt.id}>
+                {opt.name}
+              </SelectItem>
+            ))
+          )}
+        </SelectContent>
+      </Select>
+      {options.length === 0 && (
+        <Button
+          variant="outline"
+          size="icon"
+          asChild
+          className="shrink-0 h-10 w-10"
+          title={`Add ${label}`}
+        >
+          <Link href={addHref}>
+            <Plus className="h-4 w-4" />
+          </Link>
+        </Button>
+      )}
+    </div>
+  </Field>
 );
