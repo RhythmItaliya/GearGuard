@@ -14,9 +14,10 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Wrench, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ForgotPasswordPage() {
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -29,12 +30,15 @@ export default function ForgotPasswordPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSubmitted(true);
-      toast.success('Reset link sent', {
+      toast({
+        title: 'Reset link sent',
         description:
           'Check your email for instructions to reset your password.',
       });
     } catch (error) {
-      toast.error('Error', {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
         description: 'Failed to send reset link. Please try again.',
       });
     } finally {

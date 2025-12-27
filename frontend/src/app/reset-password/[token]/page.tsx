@@ -15,13 +15,14 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Wrench, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ResetPasswordPage({
   params,
 }: {
   params: { token: string };
 }) {
+  const { toast } = useToast();
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,7 +33,10 @@ export default function ResetPasswordPage({
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast({
+        variant: 'destructive',
+        title: 'Passwords do not match',
+      });
       return;
     }
 
@@ -41,12 +45,15 @@ export default function ResetPasswordPage({
     // Simulate API call
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      toast.success('Password reset successfully', {
+      toast({
+        title: 'Password reset successfully',
         description: 'You can now log in with your new password.',
       });
       router.push('/login');
     } catch (error) {
-      toast.error('Error', {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
         description: 'Failed to reset password. The link may have expired.',
       });
     } finally {

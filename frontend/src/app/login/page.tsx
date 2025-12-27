@@ -15,9 +15,10 @@ import {
 } from '@/components/ui/card';
 import Link from 'next/link';
 import { Wrench, Shield, CheckCircle2, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
+  const { toast } = useToast();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,18 +37,23 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        toast.error('Login Failed', {
+        toast({
+          variant: 'destructive',
+          title: 'Login Failed',
           description:
             'Invalid email or password. Please check your credentials.',
         });
       } else {
-        toast.success('Welcome back!', {
+        toast({
+          title: 'Welcome back!',
           description: 'You have successfully logged in.',
         });
         router.push('/dashboard');
       }
     } catch (error) {
-      toast.error('Error', {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
         description: 'An unexpected error occurred. Please try again.',
       });
     } finally {
