@@ -1,67 +1,40 @@
-// Example API service using axios and endpoints
-import axiosInstance from '@/config/axios';
-import { endpoints } from '@/config/endpoints';
+import axios, { AxiosRequestConfig } from 'axios';
+import { getSession } from 'next-auth/react';
+import { API_BASE_URL } from '@/config/endpoints';
 
-// Example: User API calls
-export const userApi = {
-  // Get all users
-  getAll: async () => {
-    const response = await axiosInstance.get(endpoints.users.base);
-    return response.data;
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
   },
+});
 
-  // Get user by ID
-  getById: async (id: string) => {
-    const response = await axiosInstance.get(endpoints.users.byId(id));
-    return response.data;
-  },
+axiosInstance.interceptors.request.use(async config => {
+  const session = await getSession();
+  const token = (session?.user as any)?.accessToken;
 
-  // Create user
-  create: async (data: any) => {
-    const response = await axiosInstance.post(endpoints.users.base, data);
-    return response.data;
-  },
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-  // Update user
-  update: async (id: string, data: any) => {
-    const response = await axiosInstance.put(endpoints.users.byId(id), data);
-    return response.data;
-  },
+  return config;
+});
 
-  // Delete user
-  delete: async (id: string) => {
-    const response = await axiosInstance.delete(endpoints.users.byId(id));
-    return response.data;
-  },
-};
+axiosInstance.interceptors.response.use(
+  response => response.data,
+  error => {
+    const message =
+      error.response?.data?.message || error.message || 'An error occurred';
+    return Promise.reject(new Error(message));
+  }
+);
 
-// Example: Auth API calls
-export const authApi = {
-  login: async (email: string, password: string) => {
-    const response = await axiosInstance.post(endpoints.auth.login, {
-      email,
-      password,
-    });
-    return response.data;
-  },
-
-  register: async (name: string, email: string, password: string) => {
-    const response = await axiosInstance.post(endpoints.auth.register, {
-      name,
-      email,
-      password,
-    });
-    return response.data;
-  },
-
-  logout: async () => {
-    const response = await axiosInstance.post(endpoints.auth.logout);
-    return response.data;
-  },
-};
-
-// Health check
-export const healthCheck = async () => {
-  const response = await axiosInstance.get(endpoints.health);
-  return response.data;
-};
+export async function apiClient<T>(
+  endpoint: string,
+  options: AxiosRequestConfig = {}
+): Promise<T> {
+  return axiosInstance.request<any, T>({
+    url: endpoint,
+    ...options,
+  });
+}

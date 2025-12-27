@@ -1,6 +1,25 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { env } from './config/env';
+import authRoutes from './routes/auth.routes';
+import dashboardRoutes from './routes/dashboard.routes';
+import equipmentRoutes from './routes/equipment.routes';
+import resourceRoutes from './routes/resource.routes';
+import maintenanceRoutes from './routes/maintenance.routes';
+import workCenterRoutes from './routes/work-center.routes';
+import teamRoutes from './routes/team.routes';
+import categoryRoutes from './routes/category.routes';
+import {
+  API_PREFIX,
+  AUTH_ROUTES,
+  DASHBOARD_ROUTES,
+  EQUIPMENT_ROUTES,
+  RESOURCE_ROUTES,
+  MAINTENANCE_ROUTES,
+  WORK_CENTER_ROUTES,
+  TEAM_ROUTES,
+  CATEGORY_ROUTES,
+} from './config/endpoints';
 
 const app: Application = express();
 
@@ -20,9 +39,18 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // API routes
-app.get('/api', (_req: Request, res: Response) => {
+app.get(API_PREFIX, (_req: Request, res: Response) => {
   res.json({ message: 'GearGuard API', version: '1.0.0' });
 });
+
+app.use(`${API_PREFIX}${AUTH_ROUTES.BASE}`, authRoutes);
+app.use(`${API_PREFIX}${DASHBOARD_ROUTES.BASE}`, dashboardRoutes);
+app.use(`${API_PREFIX}${EQUIPMENT_ROUTES.BASE}`, equipmentRoutes);
+app.use(`${API_PREFIX}${RESOURCE_ROUTES.BASE}`, resourceRoutes);
+app.use(`${API_PREFIX}${MAINTENANCE_ROUTES.BASE}`, maintenanceRoutes);
+app.use(`${API_PREFIX}${WORK_CENTER_ROUTES.BASE}`, workCenterRoutes);
+app.use(`${API_PREFIX}${TEAM_ROUTES.BASE}`, teamRoutes);
+app.use(`${API_PREFIX}${CATEGORY_ROUTES.BASE}`, categoryRoutes);
 
 // Start server
 app.listen(env.PORT, () => {

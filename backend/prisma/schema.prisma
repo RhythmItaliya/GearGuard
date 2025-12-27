@@ -10,11 +10,181 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example model - you can modify or remove this
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  name      String?
+  password  String
+  fullName  String?
+  role      String   @default("user") // "admin", "manager", "technician", "user"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  companies   UserCompany[]
+  teamMembers TeamMember[]
+  requestedRequests MaintenanceRequest[] @relation("RequestedBy")
+  assignedRequests  MaintenanceRequest[] @relation("AssignedTo")
+  responsibleCategories EquipmentCategory[] @relation("CategoryResponsible")
+  usedEquipment       Equipment[] @relation("UsedBy")
+  technicianEquipment Equipment[] @relation("Technician")
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       UserCompany[]
+  equipment   Equipment[]
+  categories  EquipmentCategory[]
+  workCenters WorkCenter[]
+  teams       MaintenanceTeam[]
+  requests    MaintenanceRequest[]
+}
+
+model UserCompany {
+  id        String   @id @default(uuid())
+  userId    String
+  companyId String
+  role      String   @default("member") // "owner", "admin", "member"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@unique([userId, companyId])
+}
+
+model EquipmentCategory {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  companyId         String
+  responsibleUserId String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  company         Company     @relation(fields: [companyId], references: [id])
+  responsibleUser User?       @relation("CategoryResponsible", fields: [responsibleUserId], references: [id])
+  equipment       Equipment[]
+  requests        MaintenanceRequest[]
+}
+
+model WorkCenter {
+  id          String   @id @default(uuid())
+  name                   String
+  code                   String?
+  tag                    String?
+  alternativeWorkCenters String?
+  costPerHour            Float?    @default(0)
+  capacity               Float?    @default(1)
+  timeEfficiency         Float?    @default(100)
+  oeeTarget              Float?    @default(0)
+  location               String?
+  description            String?
+  companyId              String
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  company   Company     @relation(fields: [companyId], references: [id])
+  equipment Equipment[]
+  requests  MaintenanceRequest[]
+}
+
+model Equipment {
+  id             String    @id @default(uuid())
+  name           String
+  description    String?
+  model          String?
+  manufacturer   String?
+  purchaseDate   DateTime?
+  warrantyExpiry DateTime?
+  status         String    @default("active") // "active", "inactive", "maintenance", "retired"
+  serialNumber      String?
+  categoryId        String?
+  companyId         String
+  workCenterId      String?
+  department        String?
+  location          String?
+  usedByUserId      String?
+  technicianUserId  String?
+  maintenanceTeamId String?
+  assignedDate      DateTime?
+  scrapDate         DateTime?
+  healthPercentage  Float?    @default(100)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  category         EquipmentCategory? @relation(fields: [categoryId], references: [id])
+  company          Company            @relation(fields: [companyId], references: [id])
+  workCenter       WorkCenter?        @relation(fields: [workCenterId], references: [id])
+  usedByUser       User?              @relation("UsedBy", fields: [usedByUserId], references: [id])
+  technicianUser   User?              @relation("Technician", fields: [technicianUserId], references: [id])
+  maintenanceTeam  MaintenanceTeam?   @relation(fields: [maintenanceTeamId], references: [id])
+  requests         MaintenanceRequest[]
+}
+
+model MaintenanceTeam {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  companyId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company  Company      @relation(fields: [companyId], references: [id])
+  members  TeamMember[]
+  requests MaintenanceRequest[]
+  equipment Equipment[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  teamId    String
+  userId    String
+  role      String   @default("member") // "lead", "technician"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team MaintenanceTeam @relation(fields: [teamId], references: [id])
+  user User            @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId])
+}
+
+// Fix for the above relation: Prisma needs the model name to match.
+// Since we named it MaintenanceTeam, we should use that.
+// But TeamMember.team relates to MaintenanceTeam.
+// Let's fix the relation name in TeamMember.
+
+model MaintenanceRequest {
+  id            String    @id @default(uuid())
+  title         String
+  description   String?
+  priority      String    @default("medium") // "low", "medium", "high", "critical"
+  status        String    @default("pending") // "pending", "in_progress", "completed", "cancelled"
+  type          String    @default("corrective") // "corrective", "preventive", "predictive"
+  scheduledDate DateTime?
+  completedDate DateTime?
+  equipmentId   String?
+  workCenterId  String?
+  companyId     String?
+  categoryId    String?
+  requestedById String
+  assignedToId  String?
+  teamId        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  equipment   Equipment?      @relation(fields: [equipmentId], references: [id])
+  workCenter  WorkCenter?     @relation(fields: [workCenterId], references: [id])
+  company     Company?        @relation(fields: [companyId], references: [id])
+  category    EquipmentCategory? @relation(fields: [categoryId], references: [id])
+  requestedBy User            @relation("RequestedBy", fields: [requestedById], references: [id])
+  assignedTo  User?           @relation("AssignedTo", fields: [assignedToId], references: [id])
+  team        MaintenanceTeam? @relation(fields: [teamId], references: [id])
 }
