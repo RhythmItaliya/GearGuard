@@ -14,7 +14,13 @@ Next.js frontend for the GearGuard application.
    Create a `.env` file:
 
    ```env
-   NEXT_PUBLIC_API_URL="http://localhost:5000"
+   # NextAuth Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET="9H3+sfD8oLvHsLoVwAGLcXSS5EQYtxbbAZXdns7wjGg"
+
+   # API Configuration
+   NEXT_PUBLIC_API_URL=http://localhost:5000/api
+   NEXT_PUBLIC_APP_ENV=development
    ```
 
 3. **Run Development Server**:

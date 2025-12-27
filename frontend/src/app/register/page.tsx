@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Logo } from '@/components/shared/Logo';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -113,17 +114,7 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-md animate-scale-in relative z-10">
         <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="p-3 rounded-xl bg-background/90 backdrop-blur-sm shadow-lg">
-            <Wrench className="h-8 w-8 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-display font-bold text-white drop-shadow-md">
-              GearGuard
-            </h1>
-            <p className="text-sm text-white/80 drop-shadow-sm">
-              Maintenance Tracker
-            </p>
-          </div>
+          <Logo variant="auth" />
         </div>
 
         <Card className="shadow-2xl border-border/50 bg-background/95 backdrop-blur-md">

@@ -3,8 +3,11 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --font-sans: 'Roboto', 'Inter', system-ui, sans-serif;
-  --font-display: 'Roboto', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', 'Odoo Unicode Support Noto', sans-serif;
+  --font-display: 'Inter', 'Odoo Unicode Support Noto', sans-serif;
+  --font-mono:
+    'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono',
+    'Courier New', monospace;
 
   --color-border: hsl(240 5% 88%);
   --color-input: hsl(240 5% 88%);

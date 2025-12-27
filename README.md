@@ -14,10 +14,14 @@ npm install
 cp .env.example .env
 ```
 **Required Environment Variables (`backend/.env`):**
-- `DATABASE_URL`: Your PostgreSQL connection string
-- `JWT_SECRET`: Secret for JWT signing (e.g., `openssl rand -base64 32`)
-- `PORT`: Server port (default: 8080)
-- `FRONTEND_URL`: URL of the frontend (default: http://localhost:3000)
+```env
+# Backend Development Environment Variables
+NODE_ENV=development
+PORT=5000
+DATABASE_URL="postgresql://neondb_owner:npg_mZ9ipRWoPK0Y@ep-rapid-field-a54y2jgf-pooler.us-east-2.aws.neon.tech/GearGuard?sslmode=require&channel_binding=require"
+FRONTEND_URL=http://localhost:3000
+JWT_SECRET="Z/HiwcPJG6KnOn9S048rPaSUCdWeJNTyn2jBo+CoCIM="
+```
 
 ```bash
 npm run prisma:generate
@@ -32,9 +36,15 @@ npm install
 cp .env.example .env
 ```
 **Required Environment Variables (`frontend/.env`):**
-- `NEXT_PUBLIC_API_URL`: URL of the backend API (default: http://localhost:8080/api)
-- `NEXTAUTH_SECRET`: Secret for NextAuth (e.g., `openssl rand -base64 32`)
-- `NEXTAUTH_URL`: URL of the frontend (default: http://localhost:3000)
+```env
+# NextAuth Configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET="9H3+sfD8oLvHsLoVwAGLcXSS5EQYtxbbAZXdns7wjGg"
+
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_APP_ENV=development
+```
 
 ```bash
 npm run dev

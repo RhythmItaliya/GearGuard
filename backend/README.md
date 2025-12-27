@@ -14,8 +14,12 @@ Node.js API built with TypeScript, Express, and Prisma.
    Create a `.env` file:
 
    ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/gearguard"
+   # Backend Development Environment Variables
+   NODE_ENV=development
    PORT=5000
+   DATABASE_URL="postgresql://neondb_owner:npg_mZ9ipRWoPK0Y@ep-rapid-field-a54y2jgf-pooler.us-east-2.aws.neon.tech/GearGuard?sslmode=require&channel_binding=require"
+   FRONTEND_URL=http://localhost:3000
+   JWT_SECRET="Z/HiwcPJG6KnOn9S048rPaSUCdWeJNTyn2jBo+CoCIM="
    ```
 
 3. **Database Setup**:
