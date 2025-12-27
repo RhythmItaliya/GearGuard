@@ -15,6 +15,7 @@ import {
   Factory,
   Folder,
   ClipboardList,
+  Building2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,6 +37,7 @@ const nav = [
   },
   { label: 'Reporting', path: '/dashboard/reporting', icon: BarChart3 },
   { label: 'Teams', path: '/dashboard/teams', icon: Users },
+  { label: 'Companies', path: '/dashboard/companies', icon: Building2 },
 ];
 
 const equipmentMenu = [

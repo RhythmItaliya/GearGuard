@@ -13,6 +13,13 @@ export const DASHBOARD_ROUTES = {
   RECENT_REQUESTS: '/dashboard/recent-requests',
 } as const;
 
+export const COMPANIES = {
+  LIST: '/companies',
+  CREATE: '/companies',
+  UPDATE: '/companies/:id',
+  DELETE: '/companies/:id',
+} as const;
+
 export const EQUIPMENT = {
   LIST: '/equipment',
   CREATE: '/equipment',
@@ -66,5 +73,6 @@ export const ENDPOINTS = {
   WORK_CENTERS,
   TEAMS,
   CATEGORIES,
+  COMPANIES,
   RESOURCES,
 } as const;

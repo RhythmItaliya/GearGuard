@@ -9,6 +9,7 @@ import maintenanceRoutes from './routes/maintenance.routes';
 import workCenterRoutes from './routes/work-center.routes';
 import teamRoutes from './routes/team.routes';
 import categoryRoutes from './routes/category.routes';
+import companyRoutes from './routes/company.routes';
 import {
   API_PREFIX,
   AUTH_ROUTES,
@@ -19,6 +20,7 @@ import {
   WORK_CENTER_ROUTES,
   TEAM_ROUTES,
   CATEGORY_ROUTES,
+  COMPANY_ROUTES,
 } from './config/endpoints';
 
 const app: Application = express();
@@ -51,6 +53,7 @@ app.use(`${API_PREFIX}${MAINTENANCE_ROUTES.BASE}`, maintenanceRoutes);
 app.use(`${API_PREFIX}${WORK_CENTER_ROUTES.BASE}`, workCenterRoutes);
 app.use(`${API_PREFIX}${TEAM_ROUTES.BASE}`, teamRoutes);
 app.use(`${API_PREFIX}${CATEGORY_ROUTES.BASE}`, categoryRoutes);
+app.use(`${API_PREFIX}${COMPANY_ROUTES.BASE}`, companyRoutes);
 
 // Start server
 app.listen(env.PORT, () => {

@@ -14,6 +14,14 @@ export const DASHBOARD_ROUTES = {
   RECENT_REQUESTS: '/recent-requests',
 } as const;
 
+export const COMPANY_ROUTES = {
+  BASE: '/companies',
+  LIST: '/',
+  CREATE: '/',
+  UPDATE: '/:id',
+  DELETE: '/:id',
+} as const;
+
 export const EQUIPMENT_ROUTES = {
   BASE: '/equipment',
   LIST: '/',
