@@ -1,0 +1,7 @@
+# Frontend Production Environment Variables
+NEXT_PUBLIC_API_URL=https://gearguard.onrender.com/api
+NEXT_PUBLIC_APP_ENV=production
+
+# Frontend Environment Variables
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_APP_ENV=development

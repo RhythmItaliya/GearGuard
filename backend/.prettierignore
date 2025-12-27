@@ -1,0 +1,14 @@
+# Ignore artifacts:
+node_modules
+dist
+
+# Ignore lock files:
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore env files:
+.env*
+
+# Ignore Prisma migrations:
+prisma/migrations
