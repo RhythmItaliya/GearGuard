@@ -15,7 +15,7 @@ export class AuthController {
         message: 'User registered successfully',
         data: result,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         return res.status(400).json({
           success: false,
@@ -56,7 +56,7 @@ export class AuthController {
         message: 'Login successful',
         data: result,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ZodError) {
         return res.status(400).json({
           success: false,
