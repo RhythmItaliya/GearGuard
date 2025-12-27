@@ -1,27 +1,325 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@plugin "tailwindcss-animate";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  --font-sans: 'Roboto', 'Inter', system-ui, sans-serif;
+  --font-display: 'Roboto', 'Inter', system-ui, sans-serif;
+
+  --color-border: hsl(240 5% 88%);
+  --color-input: hsl(240 5% 88%);
+  --color-ring: hsl(320 22% 37%);
+  --color-background: hsl(0 0% 98%);
+  --color-foreground: hsl(240 10% 20%);
+
+  --color-primary: hsl(320 22% 37%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  --color-secondary: hsl(320 15% 95%);
+  --color-secondary-foreground: hsl(320 22% 30%);
+
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  --color-muted: hsl(240 5% 94%);
+  --color-muted-foreground: hsl(240 5% 45%);
+
+  --color-accent: hsl(320 30% 92%);
+  --color-accent-foreground: hsl(320 22% 30%);
+
+  --color-success: hsl(145 65% 40%);
+  --color-success-foreground: hsl(0 0% 100%);
+
+  --color-warning: hsl(40 95% 50%);
+  --color-warning-foreground: hsl(240 10% 20%);
+
+  --color-info: hsl(205 80% 50%);
+  --color-info-foreground: hsl(0 0% 100%);
+
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(240 10% 20%);
+
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(240 10% 20%);
+
+  --color-sidebar: hsl(320 25% 18%);
+  --color-sidebar-foreground: hsl(0 0% 95%);
+  --color-sidebar-primary: hsl(320 30% 55%);
+  --color-sidebar-primary-foreground: hsl(0 0% 100%);
+  --color-sidebar-accent: hsl(320 20% 25%);
+  --color-sidebar-accent-foreground: hsl(0 0% 95%);
+  --color-sidebar-border: hsl(320 15% 25%);
+  --color-sidebar-ring: hsl(320 30% 55%);
+
+  --color-chart-1: hsl(320 22% 37%);
+  --color-chart-2: hsl(205 80% 50%);
+  --color-chart-3: hsl(145 65% 40%);
+  --color-chart-4: hsl(40 95% 50%);
+  --color-chart-5: hsl(0 72% 51%);
+
+  --radius: 0.375rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --shadow-glow: 0 0 30px hsl(320 22% 37% / 0.25);
+  --shadow-card:
+    0 4px 6px -1px hsl(240 10% 20% / 0.08),
+    0 2px 4px -2px hsl(240 10% 20% / 0.05);
+  --shadow-card-hover:
+    0 10px 15px -3px hsl(240 10% 20% / 0.1),
+    0 4px 6px -4px hsl(240 10% 20% / 0.05);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
+  --animate-slide-up: slide-up 0.3s ease-out forwards;
+  --animate-slide-in-left: slide-in-left 0.25s ease-out forwards;
+  --animate-scale-in: scale-in 0.2s ease-out forwards;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+    --card: var(--color-card);
+    --card-foreground: var(--color-card-foreground);
+    --popover: var(--color-popover);
+    --popover-foreground: var(--color-popover-foreground);
+    --primary: var(--color-primary);
+    --primary-foreground: var(--color-primary-foreground);
+    --secondary: var(--color-secondary);
+    --secondary-foreground: var(--color-secondary-foreground);
+    --muted: var(--color-muted);
+    --muted-foreground: var(--color-muted-foreground);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-accent-foreground);
+    --destructive: var(--color-destructive);
+    --destructive-foreground: var(--color-destructive-foreground);
+    --border: var(--color-border);
+    --input: var(--color-input);
+    --ring: var(--color-ring);
+    --radius: 0.375rem;
+
+    --sidebar-background: var(--color-sidebar);
+    --sidebar-foreground: var(--color-sidebar-foreground);
+    --sidebar-primary: var(--color-sidebar-primary);
+    --sidebar-primary-foreground: var(--color-sidebar-primary-foreground);
+    --sidebar-accent: var(--color-sidebar-accent);
+    --sidebar-accent-foreground: var(--color-sidebar-accent-foreground);
+    --sidebar-border: var(--color-sidebar-border);
+    --sidebar-ring: var(--color-sidebar-ring);
+
+    /* Custom gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(320, 22%, 37%) 0%,
+      hsl(320, 25%, 28%) 100%
+    );
+    --gradient-accent: linear-gradient(
+      135deg,
+      hsl(320, 30%, 55%) 0%,
+      hsl(320, 22%, 37%) 100%
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(320, 25%, 18%) 0%,
+      hsl(320, 22%, 25%) 50%,
+      hsl(320, 25%, 18%) 100%
+    );
+    --gradient-card: linear-gradient(
+      180deg,
+      hsl(0, 0%, 100%) 0%,
+      hsl(0, 0%, 98%) 100%
+    );
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medium;
+  }
+}
+
+@layer components {
+  /* Odoo-style button variants */
+  .btn-odoo {
+    @apply inline-flex items-center justify-center gap-2 rounded px-4 py-2 text-sm font-medium transition-all;
+    @apply hover:shadow-md active:scale-[0.98];
+  }
+
+  .btn-odoo-primary {
+    @apply bg-primary text-primary-foreground hover:opacity-90;
+  }
+
+  .btn-odoo-secondary {
+    @apply bg-secondary text-secondary-foreground border border-border hover:bg-accent;
+  }
+
+  /* Odoo-style cards */
+  .card-odoo {
+    @apply bg-card rounded border border-border shadow-sm;
+  }
+
+  /* Odoo-style form inputs */
+  .input-odoo {
+    @apply border border-border rounded px-3 py-2 text-sm bg-background;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
+    @apply transition-all duration-200;
+  }
+
+  /* Odoo-style badges */
+  .badge-odoo {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-success/15 text-success;
+  }
+
+  .badge-warning {
+    @apply bg-warning/15 text-warning;
+  }
+
+  .badge-danger {
+    @apply bg-destructive/15 text-destructive;
+  }
+
+  .badge-info {
+    @apply bg-info/15 text-info;
+  }
+
+  .badge-primary {
+    @apply bg-primary/15 text-primary;
+  }
+
+  /* Odoo-style table */
+  .table-odoo {
+    @apply w-full text-sm;
+  }
+
+  .table-odoo thead {
+    @apply bg-muted/50 border-b border-border;
+  }
+
+  .table-odoo th {
+    @apply px-4 py-3 text-left font-medium text-muted-foreground uppercase text-xs tracking-wider;
+  }
+
+  .table-odoo td {
+    @apply px-4 py-3 border-b border-border;
+  }
+
+  .table-odoo tbody tr:hover {
+    @apply bg-accent/30;
+  }
+
+  /* Odoo-style sidebar navigation */
+  .nav-item-odoo {
+    @apply flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors;
+    @apply hover:bg-sidebar-accent text-sidebar-foreground;
+  }
+
+  .nav-item-odoo.active {
+    @apply bg-sidebar-primary text-sidebar-primary-foreground;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
   }
 }
