@@ -22,6 +22,8 @@ import {
   Clock,
   ClipboardList,
   Star,
+  Trash2,
+  Edit,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -66,8 +68,19 @@ export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
-  const { requests, isLoading, createRequest, isCreating } = useMaintenance();
+  const {
+    requests,
+    isLoading,
+    createRequest,
+    updateRequest,
+    deleteRequest,
+    isCreating,
+    isUpdating,
+    isDeleting,
+  } = useMaintenance();
 
   const { categories, companies, teams, users, workCenters } = useResources();
 
@@ -101,8 +114,54 @@ export default function CalendarPage() {
     }
   }, [selectedDate]);
 
-  const fetchRequests = async () => {
-    // useMaintenance already fetches all requests
+  const handleEdit = (request: any) => {
+    setSelectedRequest(request);
+    setIsViewDialogOpen(false);
+
+    // Pre-populate form with existing data
+    setForm({
+      subject: request.title || '',
+      maintenanceFor: request.equipmentId ? 'equipment' : 'work_center',
+      equipmentId: request.equipmentId || '',
+      workCenterId: request.workCenterId || '',
+      categoryId: request.categoryId || '',
+      companyId: request.companyId || '',
+      technicianUserId: request.assignedToId || '',
+      maintenanceTeamId: request.teamId || '',
+      maintenanceType: request.type || 'preventive',
+      requestDate: request.createdAt
+        ? format(parseISO(request.createdAt), 'yyyy-MM-dd')
+        : new Date().toISOString().split('T')[0],
+      scheduledDate: request.scheduledDate
+        ? format(parseISO(request.scheduledDate), "yyyy-MM-dd'T'HH:mm")
+        : '',
+      durationHours: '0',
+      priority: request.priority || 'medium',
+      stage: request.status || 'new_request',
+      notes: request.description || '',
+      instructions: '',
+    });
+
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = async (requestId: string) => {
+    if (!confirm('Are you sure you want to delete this maintenance request?')) {
+      return;
+    }
+
+    try {
+      await deleteRequest(requestId);
+      toast({ title: 'Maintenance request deleted' });
+      setIsViewDialogOpen(false);
+      setSelectedRequest(null);
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete maintenance request',
+      });
+    }
   };
 
   const days = eachDayOfInterval({
@@ -145,14 +204,25 @@ export default function CalendarPage() {
         status: 'pending',
       };
 
-      await createRequest(payload);
-      toast({ title: 'Preventive maintenance scheduled' });
+      if (selectedRequest) {
+        // Edit mode
+        await updateRequest({ id: selectedRequest.id, data: payload });
+        toast({ title: 'Maintenance request updated' });
+      } else {
+        // Create mode
+        await createRequest(payload);
+        toast({ title: 'Preventive maintenance scheduled' });
+      }
+
       setIsFormOpen(false);
+      setSelectedRequest(null);
     } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to schedule maintenance',
+        description: selectedRequest
+          ? 'Failed to update maintenance'
+          : 'Failed to schedule maintenance',
       });
     }
   };
@@ -239,8 +309,12 @@ export default function CalendarPage() {
                   {dayRequests.slice(0, 3).map(req => (
                     <div
                       key={req.id}
-                      className="text-[10px] p-1 rounded bg-primary/10 text-primary truncate flex items-center gap-1"
-                      onClick={e => e.stopPropagation()}
+                      className="text-[10px] p-1 rounded bg-primary/10 text-primary truncate flex items-center gap-1 hover:bg-primary/20 cursor-pointer transition-colors"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSelectedRequest(req);
+                        setIsViewDialogOpen(true);
+                      }}
                     >
                       <div
                         className={`w-1.5 h-1.5 rounded-full ${
@@ -275,11 +349,18 @@ export default function CalendarPage() {
 
       <FormDialog
         open={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        title="Schedule Preventive Maintenance"
+        onClose={() => {
+          setIsFormOpen(false);
+          setSelectedRequest(null);
+        }}
+        title={
+          selectedRequest
+            ? 'Edit Preventive Maintenance'
+            : 'Schedule Preventive Maintenance'
+        }
         icon={CalendarIcon}
         onSubmit={handleSubmit}
-        loading={isCreating}
+        loading={isCreating || isUpdating}
       >
         <div className="flex gap-1 mb-3 flex-wrap">
           {stages.map(s => (
@@ -451,6 +532,156 @@ export default function CalendarPage() {
           />
         </Field>
       </FormDialog>
+
+      {/* Event Details Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              Maintenance Request Details
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedRequest && (
+            <div className="space-y-4">
+              {/* Status Badge */}
+              <div className="flex items-center gap-2">
+                <Badge className={stageColor[selectedRequest.status]}>
+                  {stageLabel[selectedRequest.status] || selectedRequest.status}
+                </Badge>
+                <Badge variant="outline">
+                  {selectedRequest.type === 'preventive'
+                    ? 'Preventive'
+                    : 'Corrective'}
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className={
+                    selectedRequest.priority === 'high'
+                      ? 'border-red-500 text-red-700'
+                      : selectedRequest.priority === 'medium'
+                        ? 'border-amber-500 text-amber-700'
+                        : 'border-blue-500 text-blue-700'
+                  }
+                >
+                  {selectedRequest.priority?.toUpperCase() || 'MEDIUM'} Priority
+                </Badge>
+              </div>
+
+              {/* Subject */}
+              <div>
+                <h3 className="text-lg font-semibold">
+                  {selectedRequest.title}
+                </h3>
+              </div>
+
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {selectedRequest.equipment && (
+                  <div>
+                    <p className="text-muted-foreground">Equipment</p>
+                    <p className="font-medium">
+                      {selectedRequest.equipment.name}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.workCenter && (
+                  <div>
+                    <p className="text-muted-foreground">Work Center</p>
+                    <p className="font-medium">
+                      {selectedRequest.workCenter.name}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.category && (
+                  <div>
+                    <p className="text-muted-foreground">Category</p>
+                    <p className="font-medium">
+                      {selectedRequest.category.name}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.company && (
+                  <div>
+                    <p className="text-muted-foreground">Company</p>
+                    <p className="font-medium">
+                      {selectedRequest.company.name}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.team && (
+                  <div>
+                    <p className="text-muted-foreground">Team</p>
+                    <p className="font-medium">{selectedRequest.team.name}</p>
+                  </div>
+                )}
+
+                {selectedRequest.assignedTo && (
+                  <div>
+                    <p className="text-muted-foreground">Assigned To</p>
+                    <p className="font-medium">
+                      {selectedRequest.assignedTo.fullName ||
+                        selectedRequest.assignedTo.email}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRequest.scheduledDate && (
+                  <div>
+                    <p className="text-muted-foreground">Scheduled Date</p>
+                    <p className="font-medium">
+                      {format(parseISO(selectedRequest.scheduledDate), 'PPp')}
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-muted-foreground">Created</p>
+                  <p className="font-medium">
+                    {format(parseISO(selectedRequest.createdAt), 'PPp')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Description */}
+              {selectedRequest.description && (
+                <div>
+                  <p className="text-muted-foreground text-sm mb-1">Notes</p>
+                  <p className="text-sm bg-muted p-3 rounded-lg whitespace-pre-wrap">
+                    {selectedRequest.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 pt-4 border-t">
+                <Button
+                  onClick={() => handleEdit(selectedRequest)}
+                  className="flex-1 gap-2"
+                  variant="default"
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => handleDelete(selectedRequest.id)}
+                  className="flex-1 gap-2"
+                  variant="destructive"
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

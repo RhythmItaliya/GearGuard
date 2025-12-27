@@ -18,7 +18,7 @@ cp .env.example .env
 # Backend Development Environment Variables
 NODE_ENV=development
 PORT=5000
-DATABASE_URL="postgresql://neondb_owner:npg_mZ9ipRWoPK0Y@ep-rapid-field-a54y2jgf-pooler.us-east-2.aws.neon.tech/GearGuard?sslmode=require&channel_binding=require"
+DATABASE_URL=
 FRONTEND_URL=http://localhost:3000
 JWT_SECRET="Z/HiwcPJG6KnOn9S048rPaSUCdWeJNTyn2jBo+CoCIM="
 ```
